@@ -1,4 +1,5 @@
 package WebDriver;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -13,21 +14,29 @@ public class Web{
 		driver.manage().timeouts().pageLoadTimeout(40, TimeUnit.SECONDS);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 		driver.get("https://bsi.uniriotec.br/");
-	    String pageTitle = driver.getTitle();
-	    
-	    WebElement ulElement = driver.findElement(By.id("main-menu"));
-
-        List<WebElement> liElements = ulElement.findElements(By.xpath("./li"));
-
-        for (WebElement li : liElements) {
-        	String nomeLi = li.getText();
-        	
-        	if (nomeLi.equals("PROFESSORES")) {
-        		li.click();
-        		break;
-        	}
-        }
-	    
+		
+		int numTabs = 5;
+		for (int i= 0; i < numTabs; i++) {
+			((JavascriptExecutor)driver).executeScript("window.open('https://bsi.uniriotec.br/','_blank')");
+		}
+		
+		ArrayList<String> tabs = new ArrayList<String>(driver.getWindowHandles());
+		
+		for (int i = 0; i <= numTabs; i++) {
+			driver.switchTo().window(tabs.get(i));
+			
+	        WebElement ulElement = driver.findElement(By.id("main-menu"));
+	        List<WebElement> liElements = ulElement.findElements(By.xpath("./li"));
+	        for (WebElement li : liElements) {
+	        	String nomeLi = li.getText();
+	        	if (nomeLi.equals("PROFESSORES")) {
+	        		li.click();
+	        		break;
+	        	}
+	        }       
+		}
+		
 	    driver.close();
+		
 	}
 }
